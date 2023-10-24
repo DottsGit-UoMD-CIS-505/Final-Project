@@ -13,7 +13,7 @@ Basic environment is a simplified version of the Four Knights Puzzle
 
 import sys
 import time
-from chess_board import ChessBoard, Node
+from chess_board import ChessBoard
 from a_star import a_star
 from branch_and_bound import bnb
 
