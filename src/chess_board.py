@@ -1,19 +1,10 @@
 """
-CIS 579 - Artificial Intelligence
-Assignemnt 1
-Author: Nicholas Butzke
+Chess board class that defaults to a 3x3 board
 
-Program compares the effectiveness of the A* search algorithm
-to that of traditional branch and bound search.
-Environment is a simplified version of the Four Knights Puzzle
-|B . B             W . W
-|. . .     ->      . . .
-|W . W             B . B
+Author: Nicholas Butzke
 """
 
-import sys
 from copy import deepcopy
-import time
 
 
 class ChessBoard:
@@ -23,21 +14,18 @@ class ChessBoard:
 
     def __init__(
         self,
-        board_state=None,
+        board_state=[["B", ".", "B"], [".", ".", "."], ["W", ".", "W"]],
         current_turn="W",
-        white_kight_pos=None,
-        black_knight_pos=None,
+        white_kight_pos=[[2, 0], [2, 2]],
+        black_knight_pos=[[0, 0], [0, 2]],
     ):
-        if board_state is None:
-            self.board_state = [["B", ".", "B"], [".", ".", "."], ["W", ".", "W"]]
+        self.board_state = board_state
         self.current_turn = current_turn  # white is W and black is B
 
         # Stores a list of knights and their positions.
         # Prevents searching for each knight on the board when calculating heuristic
-        if white_kight_pos is None:
-            self.white_knight_pos = [[2, 0], [2, 2]]
-        if black_knight_pos is None:
-            self.black_knight_pos = [[0, 0], [0, 2]]
+        self.white_knight_pos = white_kight_pos
+        self.black_knight_pos = black_knight_pos
 
     def get_piece(self, pos):
         """
@@ -285,175 +273,3 @@ class Node:
         Method to compare board states
         """
         return self.board == other.board
-
-
-def find(obj, lst: list):
-    """
-    Function to check if the given object is in the given list.
-    Arg1: List (likely of Nodes)                                        |   []
-    Arg2: Any (likely a Node)                                           |   Any
-
-    Return: index of the object found.  If object not found returns -1  |   #
-
-    Probably a built-in for this but I don't want to bother
-    """
-    try:
-        return lst.index(obj)
-    except ValueError:
-        return -1
-
-
-def a_star(goal_state: Node):
-    """
-    A* Algorithm
-    Finds the shortest path from a source to a destination using heuristics
-    Arg1: destination node                                                    | Node
-
-    Return: Optimal path if one is found. Otherwise will report no path found | list[Node]
-    """
-    open_list: list[Node] = [Node()]
-    closed_list: list[Node] = []
-    while open_list:
-        current_node = min(open_list, key=lambda node: node.f_score)
-        open_list.remove(current_node)
-        current_node.make_children()
-        for child in current_node.children:
-            if child.board.board_state == goal_state.board.board_state:
-                optimal_path = [goal_state]
-                while current_node is not None:
-                    optimal_path.append(current_node)
-                    current_node = current_node.parent
-                return optimal_path[::-1]
-            child.calc_heuristic()
-            i = find(child, open_list)
-            if not (i != -1 and open_list[i].f_score < child.f_score):
-                i = find(child, closed_list)
-                if not (i != -1 and closed_list[i].f_score < child.f_score):
-                    open_list.append(child)
-        closed_list.append(current_node)
-    return "no path found"
-
-
-def bnb(goal_state: Node):
-    """
-    Branch and Bound Algorithm
-    Finds the shortest path from a source to a destination using traditional methods
-    Arg1: destination node                                                           |    Node
-
-    Return: Optimal path if one is found. Otherwise will report no path found        |    list[Node]
-    """
-    open_list: list[Node] = [Node()]
-    closed_list: list[Node] = []
-    shortest_path = []
-    shortest_path_length = float("inf")
-    while open_list:
-        current_node = open_list.pop(0)
-        if (
-            current_node.board.board_state == goal_state.board.board_state
-        ):  # Report if the front of the queue is the goal
-            path = []
-            while current_node is not None:
-                path.append(current_node)
-                current_node = current_node.parent
-            if len(path) <= shortest_path_length:
-                shortest_path_length = len(path)
-            shortest_path = path[::-1]
-        else:  # Didn't find the goal
-            if current_node.g_score + 1 < shortest_path_length:
-                current_node.make_children()  # Generate its children nodes
-                for child in current_node.children:
-                    i = find(
-                        child, open_list
-                    )  # Look if a child node is already in the queue
-                    if i == -1 and child.g_score < shortest_path_length:
-                        i = find(
-                            child, closed_list
-                        )  # Look if an equivilant to the child node has already been checked
-                        if i == -1:
-                            open_list = [
-                                child
-                            ] + open_list  # If node is novel add it to the front of the queue
-        if open_list:
-            m_node = min(
-                open_list, key=lambda node: node.g_score
-            )  # Find node with minimum spent cost (g)
-            if (
-                m_node != open_list[0]
-            ):  # If not with minimum g is not at the front of the queue, put it there
-                open_list.remove(m_node)
-                open_list = [m_node] + open_list
-        closed_list.append(current_node)
-    if shortest_path:
-        return shortest_path
-    else:
-        return "no path found"
-
-
-def print_path(node_list: list[Node]):
-    """
-    Takes a list of nodes and prints out the board_states using the print_board() method
-    Arg1: a list of Node types
-
-    Return: Nothing
-    """
-    for node in node_list:
-        node.board.print_board()
-
-
-def main():
-    """
-    Main wrapper function
-    """
-    if len(sys.argv) == 2:
-        if sys.argv[1] == "-a":
-            # run only astar search
-            print("not implemented")
-        elif sys.argv[1] == "-b":
-            # run only branch and bound search
-            print("not implemented")
-        else:
-            print("Invalid arguments")
-    else:
-        # run both and compare
-
-        # setup boards.  Start is default.  Goal is explicit here
-        goal_board = [["W", ".", "W"], [".", ".", "."], ["B", ".", "B"]]
-        goal_state = Node(current_board=ChessBoard(goal_board))
-
-        # run and print A*
-        start_time = time.time()
-        a_star_path = a_star(goal_state)
-        a_star_time = time.time() - start_time
-        print(
-            "A* Solution: ("
-            + str(len(a_star_path) - 1)
-            + " moves!) (Runtime: "
-            + format(a_star_time, ".5f")
-            + "s)"
-        )
-        print_path(a_star_path)
-
-        # run and print Branch and Bound
-        start_time = time.time()
-        bnb_path = bnb(goal_state)
-        bnb_time = time.time() - start_time
-        print(
-            "Branch and Bound Solution: ("
-            + str(len(bnb_path) - 1)
-            + " moves!) (Runtime: "
-            + format(bnb_time, ".5f")
-            + "s)"
-        )
-        print_path(bnb_path)
-
-        move_dif = abs(len(a_star_path) - len(bnb_path))
-        if len(a_star_path) > len(bnb_path):
-            print("Branch and Bound path wins by " + str(move_dif) + " moves!")
-        elif len(a_star_path) < len(bnb_path):
-            print("A* path wins by " + str(move_dif) + " moves!")
-        else:
-            print("Equally optimal paths found by both algorithms!")
-
-
-if __name__ == "__main__":
-    main()
