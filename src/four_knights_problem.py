@@ -16,6 +16,7 @@ import time
 from chess_board import ChessBoard
 from a_star import a_star
 from branch_and_bound import bnb
+from node import Node
 
 
 def print_path(node_list: list[Node]):
