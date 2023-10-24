@@ -23,18 +23,21 @@ class ChessBoard:
 
     def __init__(
         self,
-        board_state=[["B", ".", "B"], [".", ".", "."], ["W", ".", "W"]],
+        board_state=None,
         current_turn="W",
-        white_kight_pos=[[2, 0], [2, 2]],
-        black_knight_pos=[[0, 0], [0, 2]],
+        white_kight_pos=None,
+        black_knight_pos=None,
     ):
-        self.board_state = board_state
+        if board_state is None:
+            self.board_state = [["B", ".", "B"], [".", ".", "."], ["W", ".", "W"]]
         self.current_turn = current_turn  # white is W and black is B
 
         # Stores a list of knights and their positions.
         # Prevents searching for each knight on the board when calculating heuristic
-        self.white_knight_pos = white_kight_pos
-        self.black_knight_pos = black_knight_pos
+        if white_kight_pos is None:
+            self.white_knight_pos = [[2, 0], [2, 2]]
+        if black_knight_pos is None:
+            self.black_knight_pos = [[0, 0], [0, 2]]
 
     def get_piece(self, pos):
         """
@@ -117,8 +120,8 @@ class ChessBoard:
         Return: if two boards are the same                                          |           Bool
         """
         return (
-            self.board_state == other.boardState
-            and self.current_turn == other.currentTurn
+            self.board_state == other.board_state
+            and self.current_turn == other.current_turn
         )
 
 
@@ -224,6 +227,7 @@ class Node:
             elif d2 == 4:
                 d2 = 2
             white_h += abs(d1 - 4) + abs(d2 - 4)
+
         for black_knight in self.board.black_knight_pos:
             d1 = abs(black_knight[0] - 2) + abs(black_knight[1] - 0)
             d2 = abs(black_knight[0] - 2) + abs(black_knight[1] - 2)
@@ -249,7 +253,7 @@ class Node:
         Arg1: coordinate position of piece that is about to be moved             | [#,#]
         Arg2: coordinate position of piece after it is moved                     | [#,#]
 
-        Return: child node with an adjusted boardState, currentTurn, and g_score | Node
+        Return: child node with an adjusted board_state, current_turn, and g_score | Node
         """
         if self.board.current_turn == "W":
             next_turn = "B"
@@ -387,7 +391,7 @@ def bnb(goal_state: Node):
 
 def print_path(node_list: list[Node]):
     """
-    Takes a list of nodes and prints out the boardstates using the print_board() method
+    Takes a list of nodes and prints out the board_states using the print_board() method
     Arg1: a list of Node types
 
     Return: Nothing
