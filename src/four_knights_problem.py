@@ -1,11 +1,11 @@
 """
-CIS 579 - Artificial Intelligence
-Assignemnt 1
+CIS 505 - Algorithm Design and Analysis
+Final Project
 Author: Nicholas Butzke
 
 Program compares the effectiveness of the A* search algorithm
-to that of traditional branch and bound search.
-Environment is a simplified version of the Four Knights Puzzle
+to that of branch and bound search.
+Basic environment is a simplified version of the Four Knights Puzzle
 |B . B             W . W
 |. . .     ->      . . .
 |W . W             B . B
