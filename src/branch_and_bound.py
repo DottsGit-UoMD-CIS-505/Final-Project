@@ -5,7 +5,7 @@ Author: Nicholas Butzke
 """
 
 from find import find
-from chess_board import Node
+from node import Node
 
 
 def bnb(goal_state: Node):

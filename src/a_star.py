@@ -4,7 +4,7 @@ A* algorithm that calculates the optimal path from source to destination.
 Author: Nicholas Butzke
 """
 
-from chess_board import Node
+from node import Node
 from find import find
 
 
