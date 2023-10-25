@@ -12,16 +12,22 @@ class ChessBoard:
 
     def __init__(
         self,
-        board_state=[["B", ".", "B"], [".", ".", "."], ["W", ".", "W"]],
+        board_state=None,
         current_turn="W",
-        white_kight_pos=[[2, 0], [2, 2]],
-        black_knight_pos=[[0, 0], [0, 2]],
+        white_kight_pos=None,
+        black_knight_pos=None,
     ):
+        if board_state is None:
+            board_state = [["B", ".", "B"], [".", ".", "."], ["W", ".", "W"]]
         self.board_state = board_state
         self.current_turn = current_turn  # white is W and black is B
 
         # Stores a list of knights and their positions.
         # Prevents searching for each knight on the board when calculating heuristic
+        if white_kight_pos is None:
+            white_kight_pos = [[2, 0], [2, 2]]
+        if black_knight_pos is None:
+            black_knight_pos = [[0, 0], [0, 2]]
         self.white_knight_pos = white_kight_pos
         self.black_knight_pos = black_knight_pos
 
