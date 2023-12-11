@@ -7,7 +7,6 @@ Author: Nicholas Butzke
 from copy import deepcopy
 from math import inf
 from chess_board import ChessBoard
-import numpy as np
 
 
 class Node:
