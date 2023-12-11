@@ -48,18 +48,18 @@ def main():
 
         # setup boards.  Start is default.  Goal is explicit here
         goal_board = [["W", ".", "W"], [".", ".", "."], ["B", ".", "B"]]
-        goal_state = Node(current_board=ChessBoard(goal_board))
+        goal_white_pos = [[0, 0], [0, 2]]
+        goal_black_pos = [[2, 0], [2, 2]]
+        goal_state = Node(
+            current_board=ChessBoard(goal_board, "W", goal_white_pos, goal_black_pos)
+        )
 
         # run and print A*
         start_time = time.time()
         a_star_path = a_star(goal_state)
         a_star_time = time.time() - start_time
         print(
-            "A* Solution: ("
-            + str(len(a_star_path) - 1)
-            + " moves!) (Runtime: "
-            + format(a_star_time, ".5f")
-            + "s)"
+            f"A* Solution: ({len(a_star_path) - 1} moves!) (Runtime: {a_star_time:.5f} s)"
         )
         print_path(a_star_path)
 
@@ -68,19 +68,15 @@ def main():
         bnb_path = bnb(goal_state)
         bnb_time = time.time() - start_time
         print(
-            "Branch and Bound Solution: ("
-            + str(len(bnb_path) - 1)
-            + " moves!) (Runtime: "
-            + format(bnb_time, ".5f")
-            + "s)"
+            f"Branch and Bound Solution: ({len(bnb_path) - 1} moves!) (Runtime: {bnb_time:.5f} s)"
         )
         print_path(bnb_path)
 
         move_dif = abs(len(a_star_path) - len(bnb_path))
         if len(a_star_path) > len(bnb_path):
-            print("Branch and Bound path wins by " + str(move_dif) + " moves!")
+            print(f"Branch and Bound path wins by {move_dif} moves!")
         elif len(a_star_path) < len(bnb_path):
-            print("A* path wins by " + str(move_dif) + " moves!")
+            print(f"A* path wins by {move_dif} moves!")
         else:
             print("Equally optimal paths found by both algorithms!")
 

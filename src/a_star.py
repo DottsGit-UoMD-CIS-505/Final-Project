@@ -29,7 +29,8 @@ def a_star(goal_state: Node):
                     optimal_path.append(current_node)
                     current_node = current_node.parent
                 return optimal_path[::-1]
-            child.calc_heuristic()
+            child.calc_heuristic(goal_state.board)
+            # child.calc_heuristic_old()
             i = find(child, open_list)
             if not (i != -1 and open_list[i].f_score < child.f_score):
                 i = find(child, closed_list)

@@ -14,8 +14,8 @@ class ChessBoard:
         self,
         board_state=None,
         current_turn="W",
-        white_kight_pos=None,
-        black_knight_pos=None,
+        white_kight_pos_list=None,
+        black_knight_pos_list=None,
     ):
         if board_state is None:
             board_state = [["B", ".", "B"], [".", ".", "."], ["W", ".", "W"]]
@@ -24,12 +24,12 @@ class ChessBoard:
 
         # Stores a list of knights and their positions.
         # Prevents searching for each knight on the board when calculating heuristic
-        if white_kight_pos is None:
-            white_kight_pos = [[2, 0], [2, 2]]
-        if black_knight_pos is None:
-            black_knight_pos = [[0, 0], [0, 2]]
-        self.white_knight_pos = white_kight_pos
-        self.black_knight_pos = black_knight_pos
+        if white_kight_pos_list is None:
+            white_kight_pos_list = [[2, 0], [2, 2]]
+        if black_knight_pos_list is None:
+            black_knight_pos_list = [[0, 0], [0, 2]]
+        self.white_knight_pos_list = white_kight_pos_list
+        self.black_knight_pos_list = black_knight_pos_list
 
     def get_piece(self, pos):
         """
@@ -68,15 +68,15 @@ class ChessBoard:
         Designed this early and just built it in.
         """
         if piece == "B":
-            if self.black_knight_pos[0] == pos:
-                self.black_knight_pos[0] = dest
+            if self.black_knight_pos_list[0] == pos:
+                self.black_knight_pos_list[0] = dest
             else:
-                self.black_knight_pos[1] = dest
+                self.black_knight_pos_list[1] = dest
         if piece == "W":
-            if self.white_knight_pos[0] == pos:
-                self.white_knight_pos[0] = dest
+            if self.white_knight_pos_list[0] == pos:
+                self.white_knight_pos_list[0] = dest
             else:
-                self.white_knight_pos[1] = dest
+                self.white_knight_pos_list[1] = dest
 
     def move_piece(self, piece_pos, piece_dest):
         """

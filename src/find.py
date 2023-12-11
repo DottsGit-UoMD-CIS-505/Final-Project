@@ -16,6 +16,9 @@ def find(obj, lst: list):
     Probably a built-in for this but I don't want to bother
     """
     try:
-        return lst.index(obj)
+        for i, item in enumerate(lst):
+            if item == obj:
+                return i
+        raise ValueError("Object not found")
     except ValueError:
         return -1
