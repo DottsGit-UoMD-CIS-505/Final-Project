@@ -8,7 +8,7 @@ from node import Node
 from find import find
 
 
-def a_star(goal_state: Node):
+def a_star(start_state: Node, goal_state: Node):
     """
     A* Algorithm
     Finds the shortest path from a source to a destination using heuristics
@@ -16,7 +16,7 @@ def a_star(goal_state: Node):
 
     Return: Optimal path if one is found. Otherwise will report no path found | list[Node]
     """
-    open_list: list[Node] = [Node()]
+    open_list: list[Node] = [start_state]
     closed_list: list[Node] = []
     while open_list:
         current_node = min(open_list, key=lambda node: node.f_score)
@@ -28,6 +28,7 @@ def a_star(goal_state: Node):
                 while current_node is not None:
                     optimal_path.append(current_node)
                     current_node = current_node.parent
+                print(f"Closed List Length: {len(closed_list)}")
                 return optimal_path[::-1]
             child.calc_heuristic(goal_state.board)
             # child.calc_heuristic_old()

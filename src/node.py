@@ -6,6 +6,7 @@ Author: Nicholas Butzke
 
 from copy import deepcopy
 from math import inf
+from math import floor
 from chess_board import ChessBoard
 
 
@@ -103,14 +104,20 @@ class Node:
         for white_knight in self.board.white_knight_pos_list:
             local_min_h = inf
             for dest in white_dest_list:
-                heuristic = sum(abs(a - b) for a, b in zip(white_knight, dest))
+                distance = sum(abs(a - b) for a, b in zip(white_knight, dest))
+                heuristic = floor(
+                    ((2 / 3) * (distance - 3) * (distance - 2) - 1) * (distance - 1) + 3
+                )
                 if heuristic < local_min_h:
                     local_min_h = heuristic
             white_h += local_min_h
         for black_knight in self.board.black_knight_pos_list:
             local_min_h = inf
             for dest in black_dest_list:
-                heuristic = sum(abs(a - b) for a, b in zip(black_knight, dest))
+                distance = sum(abs(a - b) for a, b in zip(black_knight, dest))
+                heuristic = floor(
+                    ((2 / 3) * (distance - 3) * (distance - 2) - 1) * (distance - 1) + 3
+                )
                 if heuristic < local_min_h:
                     local_min_h = heuristic
             black_h += local_min_h
