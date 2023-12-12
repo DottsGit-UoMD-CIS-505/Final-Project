@@ -35,7 +35,7 @@ def main():
     Main wrapper function
     """
     # setup boards.  Start is default.  Goal is explicit here
-    start_state, goal_state = setup_board(3)
+    start_state, goal_state = setup_board(4)
     if len(sys.argv) == 2:
         if sys.argv[1] == "-a":
             # run only astar search
