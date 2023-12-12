@@ -19,7 +19,7 @@ def a_star(start_state: Node, goal_state: Node):
     """
     open_heap: heapq = []
     heapq.heappush(open_heap, (0, start_state))
-    open_set: set = set()
+    open_set: set[Node] = set()
     open_set.add(start_state)
     closed_set: set[Node] = set()
     while open_heap:
@@ -38,18 +38,9 @@ def a_star(start_state: Node, goal_state: Node):
                 return optimal_path[::-1]
             child.calc_heuristic(goal_state.board)
             # child.calc_heuristic_old()
-
             if child not in open_set:
                 if child not in closed_set:
                     heapq.heappush(open_heap, (child.f_score, child))
                     open_set.add(child)
-
-            """
-            i = find(child, open_list)
-            if not (i != -1 and open_list[i].f_score < child.f_score):
-                i = find(child, closed_list)
-                if not (i != -1 and closed_list[i].f_score < child.f_score):
-                    open_list.append(child)
-            """
         closed_set.add(current_node)
     return "no path found"

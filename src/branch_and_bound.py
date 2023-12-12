@@ -1,14 +1,16 @@
 """
 Branch and Bound algorithm that calculates the optimal path from source to destination.
+This Branch and Bound is an exact Branch and Bound not a greedy Branch and Bound.
 
 Author: Nicholas Butzke
 """
 
 from find import find
 from node import Node
+import heapq
 
 
-def bnb(goal_state: Node):
+def bnb(start_state: Node, goal_state: Node):
     """
     Branch and Bound Algorithm
     Finds the shortest path from a source to a destination using traditional methods
@@ -16,15 +18,20 @@ def bnb(goal_state: Node):
 
     Return: Optimal path if one is found. Otherwise will report no path found        |    list[Node]
     """
-    open_list: list[Node] = [Node()]
-    closed_list: list[Node] = []
+    open_heap: heapq = []
+    heapq.heappush(open_heap, (0, start_state))
+    open_set: set[Node] = set()
+    open_set.add(start_state)
+    closed_set: set[Node] = set()
+
     shortest_path = []
-    shortest_path_length = float("inf")
-    while open_list:
-        current_node = open_list.pop(0)
-        if (
-            current_node.board.board_state == goal_state.board.board_state
-        ):  # Report if the front of the queue is the goal
+    shortest_path_length = float("inf")  # this is the bound
+    while open_set:
+        current_node: Node
+        _, current_node = heapq.heappop(open_heap)
+        open_set.remove(current_node)
+        # Report if the front of the queue is the goal
+        if current_node.board.board_state == goal_state.board.board_state:
             path = []
             while current_node is not None:
                 path.append(current_node)
@@ -36,28 +43,12 @@ def bnb(goal_state: Node):
             if current_node.g_score + 1 < shortest_path_length:
                 current_node.make_children()  # Generate its children nodes
                 for child in current_node.children:
-                    i = find(
-                        child, open_list
-                    )  # Look if a child node is already in the queue
-                    if i == -1 and child.g_score < shortest_path_length:
-                        i = find(
-                            child, closed_list
-                        )  # Look if an equivilant to the child node has already been checked
-                        if i == -1:
-                            open_list = [
-                                child
-                            ] + open_list  # If node is novel add it to the front of the queue
-        if open_list:
-            m_node = min(
-                open_list, key=lambda node: node.g_score
-            )  # Find node with minimum spent cost (g)
-            if (
-                m_node != open_list[0]
-            ):  # If not with minimum g is not at the front of the queue, put it there
-                open_list.remove(m_node)
-                open_list = [m_node] + open_list
-        closed_list.append(current_node)
+                    if not (child in open_set and child.g_score < shortest_path_length):
+                        # Look if an equivilant to the child node has already been checked
+                        if child not in closed_set:
+                            heapq.heappush(open_heap, (child.g_score, child))
+                            open_set.add(child)
+        closed_set.add(current_node)
     if shortest_path:
         return shortest_path
-    else:
-        return "no path found"
+    return "no path found"
