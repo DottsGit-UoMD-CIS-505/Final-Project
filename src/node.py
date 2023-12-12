@@ -36,6 +36,21 @@ class Node:
         self.parent: Node = parent  # Reference to the parent node
         self.children: list[Node] = []
 
+    def __hash__(self) -> int:
+        return hash(self.board)
+
+    def __eq__(self, other):
+        """
+        Method to compare board states
+        """
+        return self.board == other.board
+
+    def __lt__(self, other):
+        return self.f_score < other.f_score
+
+    def __gt__(self, other):
+        return self.f_score > other.f_score
+
     def check_valid_moves(self, knight_pos):
         """
         Finds valid moves of a SINGLE knight
@@ -58,10 +73,10 @@ class Node:
         for p_move in possible_moves:
             n_row, n_col = knight_pos[0] + p_move[0], knight_pos[1] + p_move[1]
             if (
-                (n_row >= 0 and n_row <= 2)
-                and (n_col >= 0 and n_col <= 2)
-                and self.board.get_piece([n_row, n_col])
-            ) == ".":
+                (n_row >= 0 and n_row <= len(self.board.board_state) - 1)
+                and (n_col >= 0 and n_col <= len(self.board.board_state) - 1)
+                and self.board.get_piece([n_row, n_col]) == "."
+            ):
                 moves.append((n_row, n_col))
         return moves
 
@@ -105,8 +120,29 @@ class Node:
             local_min_h = inf
             for dest in white_dest_list:
                 distance = sum(abs(a - b) for a, b in zip(white_knight, dest))
-                heuristic = floor(
-                    ((2 / 3) * (distance - 3) * (distance - 2) - 1) * (distance - 1) + 3
+                # .tex: \begin{array}{c} (x-1) \left((x-3) (x-2) \left(\left(\left(\left(\frac{x-7}{224}-\frac{5}{504}\right) (x-8)+\frac{149}{5040}\right) (x-5)-\frac{13}{120}\right) (x-4) x+\frac{2}{3}\right)-1\right)+3 \\ = \\ \frac{x^8}{224}-\frac{145 x^7}{1008}+\frac{227 x^6}{120}-\frac{9383 x^5}{720}+\frac{4811 x^4}{96}-\frac{7595 x^3}{72}+\frac{30517 x^2}{280}-\frac{8261 x}{210} \end{array}
+                # this might look scary but all I did was use lagrange interpolation to match some given points
+                heuristic = round(
+                    (distance - 1)
+                    * (
+                        (distance - 3)
+                        * (distance - 2)
+                        * (
+                            (
+                                (
+                                    ((distance - 7) / 224 - 5 / 504) * (distance - 8)
+                                    + 149 / 5040
+                                )
+                                * (distance - 5)
+                                - 13 / 120
+                            )
+                            * (distance - 4)
+                            * distance
+                            + 2 / 3
+                        )
+                        - 1
+                    )
+                    + 3
                 )
                 if heuristic < local_min_h:
                     local_min_h = heuristic
@@ -115,8 +151,27 @@ class Node:
             local_min_h = inf
             for dest in black_dest_list:
                 distance = sum(abs(a - b) for a, b in zip(black_knight, dest))
-                heuristic = floor(
-                    ((2 / 3) * (distance - 3) * (distance - 2) - 1) * (distance - 1) + 3
+                heuristic = round(
+                    (distance - 1)
+                    * (
+                        (distance - 3)
+                        * (distance - 2)
+                        * (
+                            (
+                                (
+                                    ((distance - 7) / 224 - 5 / 504) * (distance - 8)
+                                    + 149 / 5040
+                                )
+                                * (distance - 5)
+                                - 13 / 120
+                            )
+                            * (distance - 4)
+                            * distance
+                            + 2 / 3
+                        )
+                        - 1
+                    )
+                    + 3
                 )
                 if heuristic < local_min_h:
                     local_min_h = heuristic
@@ -196,9 +251,3 @@ class Node:
         for i, pos in enumerate(pos_list):
             for dest in dest_list[i]:
                 self.children.append(self.make_child(pos, dest))
-
-    def __eq__(self, other):
-        """
-        Method to compare board states
-        """
-        return self.board == other.board

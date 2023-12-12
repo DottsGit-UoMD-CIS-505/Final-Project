@@ -47,7 +47,7 @@ def main():
         # run both and compare
 
         # setup boards.  Start is default.  Goal is explicit here
-        board_choice = 2
+        board_choice = 3
         if board_choice == 1:
             start_board = [["B", ".", "B"], [".", ".", "."], ["W", ".", "W"]]
             start_white_pos = [[2, 0], [2, 2]]
@@ -67,6 +67,34 @@ def main():
                 )
             )
         elif board_choice == 2:
+            start_board = [
+                ["B", ".", ".", "B"],
+                [".", ".", ".", "."],
+                [".", ".", ".", "."],
+                ["W", ".", ".", "W"],
+            ]
+            start_white_pos = [[3, 0], [3, 3]]
+            start_black_pos = [[0, 0], [0, 3]]
+            start_state = Node(
+                current_board=ChessBoard(
+                    start_board, "W", start_white_pos, start_black_pos
+                )
+            )
+
+            goal_board = [
+                ["W", ".", ".", "W"],
+                [".", ".", ".", "."],
+                [".", ".", ".", "."],
+                ["B", ".", ".", "B"],
+            ]
+            goal_white_pos = [[0, 0], [0, 3]]
+            goal_black_pos = [[3, 0], [3, 3]]
+            goal_state = Node(
+                current_board=ChessBoard(
+                    goal_board, "W", goal_white_pos, goal_black_pos
+                )
+            )
+        elif board_choice == 3:
             start_board = [
                 ["B", ".", ".", ".", "B"],
                 [".", ".", ".", ".", "."],
@@ -101,19 +129,25 @@ def main():
         start_time = time.time()
         a_star_path = a_star(start_state, goal_state)
         a_star_time = time.time() - start_time
-        print(
-            f"A* Solution: ({len(a_star_path) - 1} moves!) (Runtime: {a_star_time:.5f} s)"
-        )
-        print_path(a_star_path)
+        if isinstance(a_star_path, str):
+            print(a_star_path)
+        else:
+            print(
+                f"A* Solution: ({len(a_star_path) - 1} moves!) (Runtime: {a_star_time:.5f} s)"
+            )
+            print_path(a_star_path)
 
         # run and print Branch and Bound
         start_time = time.time()
         bnb_path = bnb(goal_state)
         bnb_time = time.time() - start_time
-        print(
-            f"Branch and Bound Solution: ({len(bnb_path) - 1} moves!) (Runtime: {bnb_time:.5f} s)"
-        )
-        print_path(bnb_path)
+        if isinstance(bnb_path, str):
+            print(bnb_path)
+        else:
+            print(
+                f"Branch and Bound Solution: ({len(bnb_path) - 1} moves!) (Runtime: {bnb_time:.5f} s)"
+            )
+            print_path(bnb_path)
 
         move_dif = abs(len(a_star_path) - len(bnb_path))
         if len(a_star_path) > len(bnb_path):

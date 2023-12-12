@@ -4,6 +4,8 @@ Chess board class that defaults to a 3x3 board
 Author: Nicholas Butzke
 """
 
+from itertools import chain
+
 
 class ChessBoard:
     """
@@ -30,6 +32,11 @@ class ChessBoard:
             black_knight_pos_list = [[0, 0], [0, 2]]
         self.white_knight_pos_list = white_kight_pos_list
         self.black_knight_pos_list = black_knight_pos_list
+
+    def __hash__(self) -> int:
+        flattened_list = list(chain.from_iterable(self.board_state))
+        converted_tuple = tuple(flattened_list)
+        return hash(converted_tuple)
 
     def get_piece(self, pos):
         """
@@ -101,7 +108,7 @@ class ChessBoard:
         """
         for row in self.board_state:
             print(" ".join(row))
-        print("_____")
+        print(f"{'_' * (len(self.board_state)*2 - 1)}")
 
     def __eq__(self, other):
         """
