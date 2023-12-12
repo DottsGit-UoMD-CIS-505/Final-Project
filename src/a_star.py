@@ -5,7 +5,6 @@ Author: Nicholas Butzke
 """
 
 from node import Node
-from find import find
 import heapq
 
 

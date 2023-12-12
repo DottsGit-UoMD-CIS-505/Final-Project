@@ -5,7 +5,6 @@ This Branch and Bound is an exact Branch and Bound not a greedy Branch and Bound
 Author: Nicholas Butzke
 """
 
-from find import find
 from node import Node
 import heapq
 
