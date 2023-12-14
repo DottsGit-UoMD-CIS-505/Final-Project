@@ -33,7 +33,7 @@ def a_star(start_state: Node, goal_state: Node):
                 while current_node is not None:
                     optimal_path.append(current_node)
                     current_node = current_node.parent
-                print(f"Closed List Length: {len(closed_set)}")
+                # print(f"Closed List Length: {len(closed_set)}")
                 return optimal_path[::-1]
             child.calc_heuristic(goal_state.board)
             # child.calc_heuristic_old()
